@@ -1,5 +1,14 @@
 #We import os to build file paths
 import os
+import sys
+
+# Base path:
+# - normal Python run -> current project folder
+# - PyInstaller bundle -> temporary/internal bundle folder
+if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #Screen resolution of the game window (width and height)
 SCREEN_W, SCREEN_H = 1920, 1080
@@ -8,7 +17,7 @@ FPS = 60
 
 #Assets of the game (images, fonts and saved scores)
 #folder where I stored every visual elements for the game
-ASSETS_DIR = "assets"
+ASSETS_DIR = os.path.join(BASE_DIR,"assets")
 BACKGROUND_FILE = "background.png" #main background for the gameplay
 MENU_BG_FILE = "menu_background.png" #image for the first page of the game (menu)
 SCOREBOARD_BG_FILE = "scoreboard_background.png" #image for the scoreboard
