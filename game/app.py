@@ -11,7 +11,7 @@ from .settings import (
     BACKGROUND_FILE,
     GOAL_W, GOAL_H,
     DEFAULT_PLAT_W, DEFAULT_PLAT_H,
-    STATE_MENU, STATE_NAME, STATE_SCOREBOARD, STATE_GAME,
+    STATE_SPLASH, STATE_MENU, STATE_NAME, STATE_SCOREBOARD, STATE_GAME,
     WINDOW_TITLE,
 )
 #Import the helper functions + game systems from other python modules
@@ -21,7 +21,7 @@ from .effects import draw_goal_glow
 from .camera import Camera
 from .platform import Platform
 from .player import Player
-from .screens import run_menu, run_name_input, run_scoreboard
+from .screens import run_splash, run_menu, run_name_input, run_scoreboard
 
 
 def load_background_world() -> pygame.Surface:
@@ -73,7 +73,7 @@ class GameApp:
         self.plat_w = DEFAULT_PLAT_W
         self.plat_h = DEFAULT_PLAT_H
         #Global game state
-        self.state = STATE_MENU
+        self.state = STATE_SPLASH
         self.player_name = "Unknown"
         self.win = False
         #Timing variables 
@@ -102,8 +102,14 @@ class GameApp:
         screen/state (menu, name input, scoreboard, gameplay).
         """
         while True:
+            #Splash screen state
+            if self.state == STATE_SPLASH:
+                next_state = await run_splash(self.screen, self.clock)
+                if next_state == "quit":
+                    break
+                self.state = next_state
             #Menu state
-            if self.state == STATE_MENU:
+            elif self.state == STATE_MENU:
                 next_state = await run_menu(self.screen, self.clock)
                 if next_state == "quit":
                     break

@@ -7,16 +7,43 @@ from typing import Optional
 #Import the things we need for the screens of our game
 from .settings import (
     ASSETS_DIR,
+    FIRST_SCREEN_FILE,
     MENU_BG_FILE,
     SCOREBOARD_BG_FILE,
     FPS,
-    SCREEN_W,
+    SCREEN_W, SCREEN_H,
     STATE_MENU,
     STATE_NAME,
     STATE_SCOREBOARD,
 )
 from .utils import safe_load_image, get_font, draw_center_text, format_time
 from .scores import load_scores
+
+async def run_splash(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
+    """
+    Shows first_screen.jpg fullscreen. Any key or click advances to the menu.
+    """
+    img = safe_load_image(os.path.join(ASSETS_DIR, FIRST_SCREEN_FILE), convert_alpha=False)
+    font = get_font(36)
+
+    while True:
+        _ = clock.tick(FPS) / 1000.0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            if event.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN):
+                return STATE_MENU
+
+        if img:
+            scaled = pygame.transform.smoothscale(img, (SCREEN_W, SCREEN_H))
+            screen.blit(scaled, (0, 0))
+        else:
+            screen.fill((10, 10, 25))
+
+        draw_center_text(screen, font, "PRESS ANY KEY TO CONTINUE", SCREEN_H - 80, (255, 255, 255))
+        pygame.display.flip()
+        await asyncio.sleep(0)
+
 
 #Run the main menu screen
 async def run_menu(screen: pygame.Surface, clock: pygame.time.Clock) -> str:

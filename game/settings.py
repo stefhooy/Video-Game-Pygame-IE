@@ -19,6 +19,7 @@ FPS = 60
 #folder where I stored every visual elements for the game
 ASSETS_DIR = os.path.join(BASE_DIR,"assets")
 BACKGROUND_FILE = "background.png" #main background for the gameplay
+FIRST_SCREEN_FILE = "first_screen.jpg" #splash/intro screen shown before the menu
 MENU_BG_FILE = "menu_background.png" #image for the first page of the game (menu)
 SCOREBOARD_BG_FILE = "scoreboard_background.png" #image for the scoreboard
 #The character sprites (3 images, still/idle, running right, running left)
@@ -54,6 +55,7 @@ WINDOW_TITLE = "TOWER OF IE: THE WIZARD CLIMB"
 
 #Game states here in order to help us switch screens
 #Going from menu -> name_input -> game -> scoreboard 
+STATE_SPLASH = "splash"
 STATE_MENU = "menu"
 STATE_NAME = "name"
 STATE_SCOREBOARD = "scoreboard"
