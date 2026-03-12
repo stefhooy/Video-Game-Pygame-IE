@@ -1,3 +1,5 @@
+from __future__ import annotations
+import asyncio
 import os
 import pygame
 from typing import List, Optional
@@ -46,10 +48,10 @@ class GameApp:
     """
     def __init__(self) -> None:
         pygame.init()
-        init_audio()
-        play_music()
         self.screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
         pygame.display.set_caption(WINDOW_TITLE)
+        init_audio()
+        play_music()
         #Used to control FPS and compute delta time (dt)
         self.clock = pygame.time.Clock()
         #Fonts used during the game (HUD + editor overlay)
@@ -93,22 +95,22 @@ class GameApp:
         if clear_platforms:
             self.platforms = [Platform(0, self.world_h - 40, self.world_w, 40)]
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
-        Main application loop.
+        Main application loop (async for Pygbag/browser compatibility).
         This loop does not run gameplay directly. Instead, it delegates to the correct
         screen/state (menu, name input, scoreboard, gameplay).
         """
         while True:
             #Menu state
             if self.state == STATE_MENU:
-                next_state = run_menu(self.screen, self.clock)
+                next_state = await run_menu(self.screen, self.clock)
                 if next_state == "quit":
                     break
                 self.state = next_state
             #Name input state
             elif self.state == STATE_NAME:
-                name = run_name_input(self.screen, self.clock)
+                name = await run_name_input(self.screen, self.clock)
                 if name is None:
                     self.state = STATE_MENU
                 else:
@@ -117,13 +119,14 @@ class GameApp:
                     self.state = STATE_GAME
             #Scoreboard state
             elif self.state == STATE_SCOREBOARD:
-                next_state = run_scoreboard(self.screen, self.clock)
+                next_state = await run_scoreboard(self.screen, self.clock)
                 if next_state == "quit":
                     break
                 self.state = next_state
-            #GAMEPLAY state
+            #GAMEPLAY state — runs one frame then yields to the browser
             elif self.state == STATE_GAME:
                 self._run_game_frame()
+                await asyncio.sleep(0)
         #If we escape this loop, pygame will quit
         pygame.quit()
     #runs one frame of gameplay

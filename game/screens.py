@@ -1,3 +1,5 @@
+from __future__ import annotations
+import asyncio
 import os
 import pygame
 from typing import Optional
@@ -17,7 +19,7 @@ from .utils import safe_load_image, get_font, draw_center_text, format_time
 from .scores import load_scores
 
 #Run the main menu screen
-def run_menu(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
+async def run_menu(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
     """
     This function stays in a while loop until the player chooses an option:
     - ENTER -> go to name input
@@ -69,9 +71,10 @@ def run_menu(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
         draw_center_text(screen, font_body, "PRESS ESC TO QUIT", OPT3_Y, (255, 255, 255))
 
         pygame.display.flip()
+        await asyncio.sleep(0)  #yield to browser each frame
 
 #This will run the name input screen and returns:
-def run_name_input(screen: pygame.Surface, clock: pygame.time.Clock) -> Optional[str]:
+async def run_name_input(screen: pygame.Surface, clock: pygame.time.Clock) -> Optional[str]:
     """
     - A valid player name string when ENTER is pressed
     - None if the player cancels with ESC or closes the window
@@ -125,9 +128,10 @@ def run_name_input(screen: pygame.Surface, clock: pygame.time.Clock) -> Optional
         #Instructionn to go back
         draw_center_text(screen, font_body, "ESC TO GO BACK", 540, (255, 255, 255))
         pygame.display.flip()
+        await asyncio.sleep(0)  #yield to browser each frame
 
 #Runs the scoreboard screen
-def run_scoreboard(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
+async def run_scoreboard(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
     """
     Shows the top 10 best times stored in the JSON file and will return to the menu when ENTER or ESC is pressed
     """
@@ -166,3 +170,4 @@ def run_scoreboard(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
                 draw_center_text(screen, font_body, line, start_y + (i - 1) * line_h)
         draw_center_text(screen, font_body, "PRESS ENTER OR ESC TO RETURN", 950, (255, 255, 0))
         pygame.display.flip()
+        await asyncio.sleep(0)  #yield to browser each frame

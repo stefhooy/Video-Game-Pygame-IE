@@ -1,3 +1,4 @@
+from __future__ import annotations
 #import math for the sine function to have smooth animations
 import math
 import pygame

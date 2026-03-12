@@ -3,7 +3,7 @@ import pygame
 
 from .settings import ASSETS_DIR
 
-MUSIC_FILE = "background_music.mp3"
+MUSIC_FILE = "Rydeen.ogg"
 
 # Global flag so the rest of the game knows whether audio is available
 AUDIO_ENABLED = False

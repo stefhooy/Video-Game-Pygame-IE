@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pygame
 #Used to convert world coordinates to screen coordinates
 from .camera import Camera

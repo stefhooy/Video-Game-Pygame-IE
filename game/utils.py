@@ -1,7 +1,8 @@
+from __future__ import annotations
 import os
 import pygame
 #Type hint for functions that may retrun None
-from typing import Optional 
+from typing import Optional
 #Import the assets
 from .settings import ASSETS_DIR, ARCADE_FONT_FILE
 

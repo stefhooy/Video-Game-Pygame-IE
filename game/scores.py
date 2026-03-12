@@ -29,13 +29,18 @@ def load_scores() -> List[Dict]:
 
 def save_scores(scores: List[Dict]) -> None:
     """
-    Saving the current scoreboard list into the jSON file
+    Saving the current scoreboard list into the jSON file.
+    In browser builds, file writes may not persist but will not crash the game.
     """
-    #make sure the folder assets exists
-    os.makedirs(ASSETS_DIR, exist_ok=True)
-    #Writing the list of scores with indentation for readability 
-    with open(SCORES_FILE, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=2)
+    try:
+        #make sure the folder assets exists
+        os.makedirs(ASSETS_DIR, exist_ok=True)
+        #Writing the list of scores with indentation for readability
+        with open(SCORES_FILE, "w", encoding="utf-8") as f:
+            json.dump(scores, f, indent=2)
+    except Exception:
+        #In browser/WASM environments, file writes may fail silently
+        pass
 
 def add_score(player_name: str, time_seconds: float) -> None:
     """

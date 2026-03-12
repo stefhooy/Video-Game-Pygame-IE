@@ -2,21 +2,26 @@
 Main entry point for Tower of IE: The Wizard Climb.
 
 This file is intentionally minimal. Its only responsibility
-is to start the application with uv. All game logic is handled
+is to start the application. All game logic is handled
 inside the GameApp class (defined in game/app.py).
+
+asyncio.run() is required for Pygbag (browser/WebAssembly builds).
 """
-#import the main application controller
+import asyncio
+import traceback
+import pygame  # required so Pygbag preloads the pygame WASM extension
 from game.app import GameApp
 
-def main() -> None:
+async def main() -> None:
     """
     Creates an instance of the GameApp class
-    and starts the main execution loop.
-
-    Separating this into a function makes the
-    entry point explicit and keeps the script clean.
+    and starts the main async execution loop.
     """
-    GameApp().run() #start the full game system and main loop
+    try:
+        print("Starting GameApp...")
+        await GameApp().run()
+    except Exception as e:
+        print("FATAL ERROR:", e)
+        traceback.print_exc()
 
-if __name__ == "__main__":
-    main()
+asyncio.run(main())
