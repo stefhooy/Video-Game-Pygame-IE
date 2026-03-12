@@ -12,6 +12,7 @@ from .settings import (
     SCOREBOARD_BG_FILE,
     FPS,
     SCREEN_W, SCREEN_H,
+    STATE_SPLASH,
     STATE_MENU,
     STATE_NAME,
     STATE_SCOREBOARD,
@@ -79,9 +80,9 @@ async def run_menu(screen: pygame.Surface, clock: pygame.time.Clock) -> str:
                     #S to go to scoreboard
                 if event.key == pygame.K_s:
                     return STATE_SCOREBOARD
-                    #Esc to quit
+                    #Esc to go back to splash screen
                 if event.key == pygame.K_ESCAPE:
-                    return "quit"
+                    return STATE_SPLASH
         #Drawing the blit, title + descriptions
         if menu_bg:
             screen.blit(menu_bg, (0, 0))
