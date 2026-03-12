@@ -1,53 +1,67 @@
-# 🧙‍♂️ Tower of IE: The Wizard Climb
+# Tower of IE: The Wizard Climb
 
 <p align="center">
-  <b>A 2D fantasy vertical platformer built with Python & Pygame</b><br>
-  Designed with modular object-oriented architecture and clean package structure.
+  <b>A 2D fantasy vertical platformer built with Python & Pygame — playable in the browser</b><br>
+  Deployed on itch.io via WebAssembly (Pygbag)
 </p>
 
 ---
 
-## 🎮 Game Overview
+## Play Online
 
-**Tower of IE: The Wizard Climb** is a 2D vertical platformer where the player controls a wizard climbing a magical tower by jumping across platforms while the camera follows dynamically.
+**[Play on itch.io](https://stefhooy.itch.io/tower-of-ie-the-wizard-climb)**
 
-The objective is simple:
+No installation required. Runs directly in your browser.
 
-> Reach the glowing flag at the top in the fastest possible time without falling.
-
-The game features real-time physics, collision detection, dynamic platform creation (editor mode), persistent score tracking, and looping background music for a more immersive experience.
+> For the best display, use your browser's zoom (Ctrl + / Ctrl -) until the game fills your screen.
 
 ---
 
-## 🏗 Architecture
+## Game Overview
 
-The project was initially developed as a single script and later refactored into a modular package structure to improve readability, maintainability, and scalability.
+**Tower of IE: The Wizard Climb** is a 2D vertical platformer where you play as a sorcerer student at IE University. Conjure platforms to climb the tower and reach the flag at the top as fast as possible!
+
+The game features real-time physics, collision detection, dynamic platform creation (editor mode), persistent score tracking, and looping background music.
+
+---
+
+## How to Play
+
+| Key | Action |
+|-----|--------|
+| Arrow keys / WASD | Move and jump |
+| E | Toggle editor mode |
+| [ / ] | Decrease / increase platform width (editor) |
+| - / + (numpad) | Decrease / increase platform height (editor) |
+| Left click | Place platform (editor) |
+| Right click | Remove nearest platform (editor) |
+| R | Restart run (clears platforms) |
+| S | View scoreboard (after finishing) |
+| ESC | Return to menu |
+
+---
+
+## Architecture
 
 ### Core Components
 
-**Player**
-Handles movement, gravity, velocity, jumping mechanics, sprite rendering, and collision detection.
+**Player** — Movement, gravity, velocity, jumping, sprite rendering, collision detection.
 
-**Platform**
-Represents static surfaces that the player can land on.
+**Platform** — Static surfaces the player can land on; created/removed in editor mode.
 
-**Camera**
-Manages vertical scrolling and transforms world coordinates into screen coordinates.
+**Camera** — Dynamic vertical scrolling; transforms world coordinates to screen coordinates.
 
-**GameApp**
-Controls the main loop, state transitions (menu, name input, scoreboard, gameplay), and rendering pipeline.
+**GameApp** — Main loop, state machine (splash → menu → name input → game → scoreboard), rendering pipeline.
 
-**Score System**
-Stores completion times in a JSON file and ranks players by fastest time.
+**Score System** — Stores completion times in a JSON file, ranked by fastest time.
 
-**Audio System (`audio.py`)**
-Initializes `pygame.mixer` and plays looping background music from the `assets/` folder.
+**Audio System** — Initializes `pygame.mixer` and plays looping background music.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-```text id="n93krv"
+```text
 tower-of-ie-wizard-climb/
 │
 ├── assets/                 # Backgrounds, sprites, fonts, music, scores.json
@@ -65,58 +79,69 @@ tower-of-ie-wizard-climb/
 │   ├── screens.py
 │   └── app.py
 │
-├── main.py                 # Entry point
+├── build/web/              # Pygbag web build output
+│   ├── index.html          # Patched HTML wrapper (do not overwrite without re-applying patches)
+│   ├── video_game_2.tar.gz # Packaged Python game files
+│   └── browserfs.min.js    # Bundled locally (CDN blocked by itch.io)
+│
+├── main.py                 # Entry point (asyncio.run for Pygbag compatibility)
+├── pygbag.ini              # Pygbag build config
 ├── pyproject.toml
 └── README.md
 ```
 
-The modular design ensures separation of concerns and makes the project easy to extend with new features.
+---
+
+## Web Build
+
+The game is compiled to WebAssembly using [Pygbag](https://pygame-web.github.io/) 0.9.3.
+
+### Build command
+
+```bash
+python -m pygbag --build .
+```
+
+This regenerates `build/web/index.html` and `build/web/video_game_2.tar.gz`.
+
+### After every build, re-apply these patches to `build/web/index.html`
+
+1. **Line 1** — Add `devicePixelRatio=1` fix and set `data-os="vtx,gui"` (no `snd`)
+2. **Tarfile block** — Use `mode="r:*"` and remove the itch.zone APK detection block
+3. **embed.counter() loop** — Add 300-tick timeout to prevent infinite stall
+4. **UME block** — Remove entirely (no audio WASM loaded)
+5. **JS config** — Set `autorun:1`, `gui_divider:1`, `fb_width:"960"`, `fb_height:"540"`
+6. **CSS** — Canvas `width:100vw`, `height:100vh`, `outline:none`; body `background:black`
+7. **`custom_postrun`** — Add delayed resize events (500ms, 1500ms) to fix canvas sizing
+8. **`browserfs.min.js`** — Use local copy, not CDN
+
+### Package for itch.io upload
+
+```bash
+# From build/web/
+Compress-Archive -Path index.html,favicon.png,video_game_2.tar.gz,browserfs.min.js -DestinationPath ../../tower-of-ie-web.zip -Force
+```
+
+Upload `tower-of-ie-web.zip` to itch.io. Set viewport to **960 x 540**.
 
 ---
 
-## ⚙️ Environment Setup (uv)
+## Technical Highlights
 
-This project uses `uv` for dependency and virtual environment management.
-
-Create the environment:
-
-```bash id="o0yxaf"
-uv venv
-```
-
-Install dependencies:
-
-```bash id="z6r91f"
-uv add pygame
-```
-
-Run the game:
-
-```bash id="h0jv8k"
-uv run python main.py
-```
+- Object-Oriented Python with modular package architecture
+- Game loop design with async/await for browser compatibility
+- Physics simulation (gravity, velocity, delta-time movement)
+- Collision detection system
+- Camera abstraction (world-to-screen transformation)
+- JSON score persistence
+- Background music via `pygame.mixer`
+- WebAssembly deployment via Pygbag
 
 ---
 
-## 🧠 Technical Highlights
-
-* Object-Oriented Programming in Python
-* Modular package architecture
-* Game loop design
-* Physics simulation (gravity & velocity)
-* Collision detection system
-* Camera abstraction (world-to-screen transformation)
-* JSON score persistence
-* Background music integration using `pygame.mixer`
-* Refactoring from monolithic script to scalable package
-
----
-
-## 👨‍💻 Author
+## Author
 
 Stephan Pentchev
-Master’s in Business Analytics and Data Science
+Master's in Business Analytics and Data Science — IE University
 
 Developed as part of a Python object-oriented programming coursework project.
-
----
