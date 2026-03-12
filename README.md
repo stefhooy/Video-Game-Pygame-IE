@@ -142,6 +142,6 @@ Upload `tower-of-ie-web.zip` to itch.io. Set viewport to **960 x 540**.
 ## Author
 
 Stephan Pentchev
-Master's in Business Analytics and Data Science — IE University
+Master's in Business Analytics and Data Science IE University
 
 Developed as part of a Python object-oriented programming coursework project.
